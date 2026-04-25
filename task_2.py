@@ -23,7 +23,7 @@ def logger(path):
             result = old_function(*args, **kwargs)
 
             _write_log(
-                path=path,  #  замыкание 
+                path=path,   
                 func_name=old_function.__name__,
                 args=args,
                 kwargs=kwargs,
