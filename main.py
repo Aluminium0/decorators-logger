@@ -1,25 +1,6 @@
 import os
-from datetime import datetime
-from functools import wraps
 
-
-def logger(old_function):
-
-    @wraps(old_function)
-    def new_function(*args, **kwargs):
-        result = old_function(*args, **kwargs)
-
-        with open('main.log', 'a', encoding='utf-8') as log_file:
-            log_file.write(
-                f'{datetime.now()} | '
-                f'{old_function.__name__} | '
-                f'args={args}, kwargs={kwargs} | '
-                f'result={result}\n'
-            )
-
-        return result
-
-    return new_function
+from logger import logger
 
 
 def test_1():
