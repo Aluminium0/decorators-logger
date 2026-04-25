@@ -3,19 +3,30 @@ from datetime import datetime
 from functools import wraps
 
 
+def _write_log(path, func_name, args, kwargs, result):
+    with open(path, 'a', encoding='utf-8') as f:
+        f.write(
+            f"{datetime.now()} | "
+            f"{func_name} | "
+            f"args={args} | "
+            f"kwargs={kwargs} | "
+            f"result={result}\n"
+        )
+
+
 def logger(old_function):
 
     @wraps(old_function)
     def new_function(*args, **kwargs):
         result = old_function(*args, **kwargs)
 
-        with open('main.log', 'a', encoding='utf-8') as log_file:
-            log_file.write(
-                f'{datetime.now()} | '
-                f'{old_function.__name__} | '
-                f'args={args}, kwargs={kwargs} | '
-                f'result={result}\n'
-            )
+        _write_log(
+            path='main.log',
+            func_name=old_function.__name__,
+            args=args,
+            kwargs=kwargs,
+            result=result
+        )
 
         return result
 
@@ -24,7 +35,6 @@ def logger(old_function):
 
 def test_1():
     path = 'main.log'
-
     if os.path.exists(path):
         os.remove(path)
 
@@ -40,7 +50,7 @@ def test_1():
     def div(a, b):
         return a / b
 
-    assert 'Hello World' == hello_world()
+    assert hello_world() == 'Hello World'
     assert summator(2, 2) == 4
     assert div(6, 2) == 3
 
@@ -49,13 +59,13 @@ def test_1():
     summator(4.3, b=2.2)
     summator(a=0, b=0)
 
-    with open(path, encoding='utf-8') as log_file:
-        log_file_content = log_file.read()
+    with open(path, encoding='utf-8') as f:
+        content = f.read()
 
-    assert 'summator' in log_file_content
+    assert 'summator' in content
 
     for item in (4.3, 2.2, 6.5):
-        assert str(item) in log_file_content
+        assert str(item) in content
 
 
 if __name__ == '__main__':
