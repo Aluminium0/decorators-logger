@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 from functools import wraps
 
-
 def _write_log(path, func_name, args, kwargs, result):
     with open(path, 'a', encoding='utf-8') as f:
         f.write(
