@@ -3,7 +3,18 @@ from datetime import datetime
 from functools import wraps
 
 
-def logger(path):
+def _write_log(path, func_name, args, kwargs, result):
+    with open(path, 'a', encoding='utf-8') as f:
+        f.write(
+            f"{datetime.now()} | "
+            f"{func_name} | "
+            f"args={args} | "
+            f"kwargs={kwargs} | "
+            f"result={result}\n"
+        )
+
+
+def logger(path):  
 
     def __logger(old_function):
 
@@ -11,13 +22,13 @@ def logger(path):
         def new_function(*args, **kwargs):
             result = old_function(*args, **kwargs)
 
-            with open(path, 'a', encoding='utf-8') as log_file:
-                log_file.write(
-                    f'{datetime.now()} | '
-                    f'{old_function.__name__} | '
-                    f'args={args}, kwargs={kwargs} | '
-                    f'result={result}\n'
-                )
+            _write_log(
+                path=path,  #  замыкание 
+                func_name=old_function.__name__,
+                args=args,
+                kwargs=kwargs,
+                result=result
+            )
 
             return result
 
@@ -54,13 +65,13 @@ def test_2():
     for path in paths:
         assert os.path.exists(path)
 
-        with open(path, encoding='utf-8') as log_file:
-            log_file_content = log_file.read()
+        with open(path, encoding='utf-8') as f:
+            content = f.read()
 
-        assert 'summator' in log_file_content
+        assert 'summator' in content
 
         for item in (4.3, 2.2, 6.5):
-            assert str(item) in log_file_content
+            assert str(item) in content
 
 
 if __name__ == '__main__':
