@@ -23,8 +23,8 @@ def logger(old_function):
 
 
 def test_1():
-
     path = 'main.log'
+
     if os.path.exists(path):
         os.remove(path)
 
